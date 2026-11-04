@@ -1,0 +1,36 @@
+
+import cv2
+
+img = cv2.imread("image.jpg")
+template = cv2.imread("watch.jpg")
+
+if img is None or template is None:
+    print("Image not found!")
+    exit()
+
+# Resize template
+template = cv2.resize(template, (100, 100))
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+temp = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+
+result = cv2.matchTemplate(
+    gray, temp, cv2.TM_CCOEFF_NORMED
+)
+
+_, max_val, _, max_loc = cv2.minMaxLoc(result)
+
+h, w = temp.shape
+
+if max_val > 0.5:
+    cv2.rectangle(img, max_loc,
+                  (max_loc[0]+w, max_loc[1]+h),
+                  (0, 255, 0), 2)
+    print("Watch detected")
+else:
+    print("Watch not detected")
+
+cv2.imshow("Watch Recognition", img)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
